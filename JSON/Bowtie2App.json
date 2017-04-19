@@ -23,12 +23,14 @@
     {"id": "reference_in",
     "value": {
       "required": true,
-      "visible": true
+      "visible": true,
+      "default": ""
     },
     "details": {
       "label": "List of files with ref sequences"
     },
     "semantics": {
+      "minCardinality": 1,
       "maxCardinality": -1
     }
   },
@@ -98,8 +100,7 @@
     },
     "details": {
       "label" : "Index base",
-      "description": "write bt2 data to files with this dir/basename",
-      "showArgument": true
+      "description": "write bt2 data to files with this dir/basename"
       }},
     {"id": "fasta_input",
     "value": {
@@ -203,7 +204,7 @@
       "label": "Preset",
       "description": "see manual for parameters explanations. Default is sensitive"
       }
-    }
+    },
     {"id": "N_opt",
     "value": {
       "type": "string",
@@ -336,7 +337,7 @@
         {"--end-to-end ": "global (default)"},
         {"--local ": "local"}
       ],
-      "default": "--end-to-end ",
+      "default": "--end-to-end "
       },
     "details": {
       "label": "Global or local alignment",
@@ -421,6 +422,214 @@
       "argument": "--score-min "
       }
     },
-    ######report
+    {"id": "report_int",
+    "value": {
+      "type": "string",
+      "visible": true,
+      "validator":"^\\d+$"
+      },
+    "details": {
+      "label": "Report up to <int> alignments",
+      "description": "default: report best alignment",
+      "showArgument": true,
+      "argument": "-k "
+      }
+    },
+    {"id": "report_all",
+    "value": {
+      "type": "flag",
+      "visible": true
+      },
+    "details": {
+      "label": "Report all alignments - very slow",
+      "description": "default: report best alignment",
+      "showArgument": true,
+      "argument": "--all "
+      }
+    },
+    {"id": "D_opt",
+    "value": {
+      "type": "string",
+      "visible": true,
+      "validator":"^\\d+$"
+      },
+    "details": {
+      "label": "Give up extending after <int> failed in a row (15)",
+      "showArgument": true,
+      "argument": "-D "
+      }
+    },
+    {"id": "R_opt",
+    "value": {
+      "type": "string",
+      "visible": true,
+      "validator":"^\\d+$"
+      },
+    "details": {
+      "label": "For reads with repetitive seeds try <int> sets of seeds (2)",
+      "showArgument": true,
+      "argument": "-R "
+      }
+    },
+    {"id": "minins",
+    "value": {
+      "type": "string",
+      "visible": true,
+      "validator":"^\\d+$"
+      },
+    "details": {
+      "label": "Min fragment length for paired-end (0)",
+      "showArgument": true,
+      "argument": "--minins "
+      }
+    },
+    {"id": "maxins",
+    "value": {
+      "type": "string",
+      "visible": true,
+      "validator":"^\\d+$"
+      },
+    "details": {
+      "label": "Max fragment length for paired-end (500)",
+      "showArgument": true,
+      "argument": "--maxins "
+      }
+    },
+    {"id": "pe-alignment",
+    "value": {
+      "type": "enumeration",
+      "visible": true,
+      "enumValues": [
+        {"--fr ": "fw/rev"},
+        {"--rf ": "rev/fw"},
+        {"--ff ": "fw/fw"}
+      ]
+      },
+    "details": {
+      "label": "Mates align:",
+      "description": "default is fw/rev"
+      }
+    },
+    {"id": "no-mixed",
+    "value": {
+      "type": "flag",
+      "visible": true
+      },
+    "details": {
+      "label": "Suppres unpaired alignments for paired reads",
+      "showArgument": true,
+      "argument": "--no-mixed "
+      }
+    },
+    {"id": "no-discordant",
+    "value": {
+      "type": "flag",
+      "visible": true
+      },
+    "details": {
+      "label": "Suppress discordant alignments for paired reads",
+      "showArgument": true,
+      "argument": "--no-discordant "
+      }
+    },
+    {"id": "no-dovetail",
+    "value": {
+      "type": "flag",
+      "visible": true
+      },
+    "details": {
+      "label": "Not concordant when mates extend past each other",
+      "showArgument": true,
+      "argument": "--no-dovetail "
+      }
+    },
+    {"id": "no-contain",
+    "value": {
+      "type": "flag",
+      "visible": true
+      },
+    "details": {
+      "label": "Not concordant when one mate alignment contains other",
+      "showArgument": true,
+      "argument": "--no-contain "
+      }
+    },
+    {"id": "no-overlap",
+    "value": {
+      "type": "flag",
+      "visible": true
+      },
+    "details": {
+      "label": "Not concordant when mates overlap at all",
+      "showArgument": true,
+      "argument": "--no-overlap "
+      }
+    },
+    {"id": "ungz",
+    "value": {
+      "type": "flag",
+      "visible": true
+      },
+    "details": {
+      "label": "Output unpaired reads that didn't align",
+      "showArgument": true,
+      "argument": "--un-gz "
+      }
+    },
+    {"id": "algz",
+    "value": {
+      "type": "flag",
+      "visible": true
+      },
+    "details": {
+      "label": "Output unpaired reads that aligned at least once",
+      "showArgument": true,
+      "argument": "--al-gz "
+      }
+    },
+    {"id": "unconcgz",
+    "value": {
+      "type": "flag",
+      "visible": true
+      },
+    "details": {
+      "label": "Output pairs that didn't align concordantly",
+      "showArgument": true,
+      "argument": "--un-conc-gz "
+      }
+    },
+    {"id": "alconcgz",
+    "value": {
+      "type": "flag",
+      "visible": true
+      },
+    "details": {
+      "label": "Output pairs that aligned concordantly at least once",
+      "showArgument": true,
+      "argument": "--al-conc-gz "
+      }
+    },
+    {"id": "met",
+    "value": {
+      "type": "flag",
+      "visible": true
+      },
+    "details": {
+      "label": "Output metrics",
+      "showArgument": true,
+      "argument": "--met-file "
+      }
+    },
+    {"id": "qc-filter",
+    "value": {
+      "type": "flag",
+      "visible": true
+      },
+    "details": {
+      "label": "Filter out reads that are bad according to QSEQ filter",
+      "showArgument": true,
+      "argument": "--un-gz "
+      }
+    }
 ]
 }

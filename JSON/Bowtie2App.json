@@ -22,15 +22,13 @@
   "inputs": [
     {"id": "reference_in",
     "value": {
-      "required": true,
-      "visible": true,
-      "default": ""
+      "required": false,
+      "visible": true
     },
     "details": {
       "label": "List of files with ref sequences"
     },
     "semantics": {
-      "minCardinality": 1,
       "maxCardinality": -1
     }
   },
@@ -84,7 +82,7 @@
       },
     "details": {
       "label": "Index archive",
-      "description": "if you already have an index you can upload the archive."
+      "description": "if you already have an index you can upload the archive. (tar.gz or .tar)"
       },
     "semantics": {
       "maxCardinality": 1
@@ -628,7 +626,7 @@
     "details": {
       "label": "Filter out reads that are bad according to QSEQ filter",
       "showArgument": true,
-      "argument": "--un-gz "
+      "argument": "--qc-filter "
       }
     }
 ]

@@ -17,9 +17,13 @@ echo ${rmthis}
 
 ARGSU=" ${reference_in} ${m1} ${m2} ${r_file} ${index_archive} ${b2_index_base} ${fasta_input} ${qseq} ${raw_input} ${trim5} ${trim3} ${phred64} ${intquals} ${preset} ${N_opt} ${L_opt} ${i_opt} ${n-ceil} ${dpad} ${gbar} ${ignore-quals} ${nofw} ${norc} ${no1mm} ${alignment} ${ma_opt} ${mp_opt} ${np_opt} ${rdg_opt} ${rfg_opt} ${score-min} ${report_int} ${report_all} ${D_opt} ${R_opt} ${minins} ${maxins} ${pe-alignment} ${no-mixed} ${no-discordant} ${no-dovetail} ${no-contain} ${no-overlap} ${ungz} ${algz} ${unconcgz} ${alconcgz} ${met} ${qc-filter}"
 REFERENCEU=`echo ${reference_in} | sed -e 's/ /, /g'`
+REFECMD=`echo ${reference_in} | sed -e 's/ /,/g'`
 M1U=`echo ${m1} | sed -e 's/ /, /g'`
+M1CMD=`echo ${m1} | sed -e 's/ /,/g'`
 M2U=`echo ${m2} | sed -e 's/ /, /g'`
+M2CMD=`echo ${m2} | sed -e 's/ /,/g'`
 RFILEU=`echo ${r_file} | sed -e 's/ /, /g'`
+RFILECMD=`echo ${r_file} | sed -e 's/ /,/g'`
 INDEXARCHIVEU="${index_archive}"
 INPUTSU="${REFERENCEU}, ${M1U}, ${M2U}, ${RFILEU}, ${INDEXARCHIVEU}"
 echo "reference file(s) are " "${REFERENCEU}"
@@ -41,18 +45,18 @@ CMDLINEARGS=""
 ###################build index step of bowtie2########################
 if [ -n "${reference_in}" ]
   then
-    if [ -n "${index_archive}"]
+    if [ -n "${index_archive}" ]
       then
-        >&2 echo "only one between Index archive and refrence file(s) is expected, please choose one"
+        >&2 echo "only one between Index archive and reference file(s) is expected, please choose one"
         debug
         exit 1;
     else
       if [ -n "${b2_index_base}" ]
         then
-          CMDLINEARGS+="bowtie2-build ${REFERENCEU} ${b2_index_base}; "
+          CMDLINEARGS+="bowtie2-build ${REFECMD} ${b2_index_base}; "
         else
           echo "Index base was not given, the default cyverse_index will be used"
-          CMDLINEARGS+="bowtie2-build ${REFERENCEU} cyverse_index; "
+          CMDLINEARGS+="bowtie2-build ${REFECMD} cyverse_index; "
       fi
     fi
 fi
@@ -60,7 +64,7 @@ fi
 if [ -n "${index_archive}" ]
   then
     CMDLINEARGS+="tar -xzvf ${index_archive}; "
-    b2_index_base=`echo ${index_archive} | sed -e 's/.gz$//g; s/.tar$//g'` ####check this is the one used if it's given in json, possibly change the varibale name and use shell to use this if it exist, the one given by agave if otherwise, or cyverse_index at last
+    UNZIP=`echo ${index_archive} | sed -e 's/.gz$//g; s/.tar$//g'` ####check this is the one used if it's given in json, possibly change the varibale name and use shell to use this if it exist, the one given by agave if otherwise, or cyverse_index at last
 fi
 
 #####################map step of bowtie2#############################
@@ -77,16 +81,23 @@ if [ -n "${m1}" ] && [ -n "${r_file}" ]
     debug
     exit 1;
 fi
+if [ -z "${m1}" ] && [ -z "${r_file}" ]
+  then
+    >&2 echo "file(s) to align are required: please provide paired or unpaired reads"
+    debug
+    exit 1;
+fi
 
 #check parameters and options
 CMDLINEARGS+="bowtie2 "
 #choose input format -this *may* potentially work with multiple formats, but the app would be very user unfriendly andit would have to specify to ignore qualities anyway so we keep it like this for cyverse
 if [ -n "${fasta_input}" ]
-  if [ -n "${qseq}" -o -n "${raw_input}" ]
-    then
-      >&2 echo "inputs should all be FASTQ, FASTA, qseq or raw files"
-      debug
-      exit 1;
+  then
+    if [ -n "${qseq}" -o -n "${raw_input}" ]
+      then
+        >&2 echo "inputs should all be FASTQ, FASTA, qseq or raw files"
+        debug
+        exit 1;
   else
     if [ -n "${qseq}" -a -n "${raw_input}" ]
       then
@@ -97,9 +108,9 @@ if [ -n "${fasta_input}" ]
   fi
 fi
 CMDLINEARGS+="${fasta_input} ${qseq} ${raw_input} ${trim5} ${trim3} ${phred64} ${intquals} "
-if [ "${alignement}" = "--end-to-end " ]
+if [ "${alignment}" = "--end-to-end " ]
   then
-    CMDLINEARGS+="${alignement} ${preset} "
+    CMDLINEARGS+="${alignment} ${preset} "
   else
     localpreset=`echo ${preset} | sed -e 's/ $/-local /g'`
     CMDLINEARGS+="${alignment} ${localpreset} "
@@ -143,6 +154,23 @@ fi
 CMDLINEARGS+="${qc-filter} "
 
 #add file(s) -x -1 -2 -U condireing they have to be comma separated with no spaces in between
+if [ -n "${UNZIP}" ]
+  then
+    CMDLINEARGS+="-x ${UNZIP} "
+  else
+    if [ -n "${b2_index_base}" ]
+      then
+        CMDLINEARGS+="-x ${b2_index_base} "
+      else
+        CMDLINEARGS+="-x cyverse_index "
+    fi
+fi
+if [ -n "${m1}" ]
+  then
+    CMDLINEARGS+="-1 ${M1CMD} -2 ${M2CMD} "
+  else
+    CMDLINEARGS+="-U ${RFILECMD} "
+fi
 CMDLINEARGS+="-S output"
 
 echo ${CMDLINEARGS}

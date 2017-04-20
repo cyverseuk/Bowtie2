@@ -8,7 +8,7 @@
   "author": "Alice Minotto",
   "version": "2.2.6",
   "deploymentSystem": "cyverseUK-Storage2",
-  "deploymentPath": "/mnt/data/apps/Bowtie2",
+  "deploymentPath": "/mnt/data/apps/bowtie2",
   "executionSystem": "cyverseUK-Batch2",
   "executionType": "CLI",
   "parallelism": "SERIAL",

@@ -176,14 +176,12 @@ CMDLINEARGS+="-S output"
 echo ${CMDLINEARGS}
 chmod +x launch.sh
 
-exit 0;
-
 echo  universe                = docker >> lib/condorSubmitEdit.htc
 echo docker_image            =  cyverseuk/bowtie2:v2.2.6 >> lib/condorSubmitEdit.htc
 echo executable               = ./launch.sh >> lib/condorSubmitEdit.htc ###
 echo transfer_input_files               = ${INPUTSU}, launch.sh >> lib/condorSubmitEdit.htc ####add permissions to launch.sh
 echo arguments                          = ${CMDLINEARGS} >> lib/condorSubmitEdit.htc
-cat /mnt/data/apps/ncbi_sra_import/lib/condorSubmit.htc >> lib/condorSubmitEdit.htc
+cat /mnt/data/apps/bowtie2/lib/condorSubmit.htc >> lib/condorSubmitEdit.htc
 
 less lib/condorSubmitEdit.htc
 

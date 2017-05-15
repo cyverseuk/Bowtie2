@@ -98,6 +98,7 @@ if [ -n "${fasta_input}" ]
         >&2 echo "inputs should all be FASTQ, FASTA, qseq or raw files"
         debug
         exit 1;
+    fi
   else
     if [ -n "${qseq}" -a -n "${raw_input}" ]
       then
@@ -105,7 +106,6 @@ if [ -n "${fasta_input}" ]
         debug
         exit 1;
     fi
-  fi
 fi
 CMDLINEARGS+="${fasta_input} ${qseq} ${raw_input} ${trim5} ${trim3} ${phred64} ${intquals} "
 if [ "${alignment}" = "--end-to-end " ]
